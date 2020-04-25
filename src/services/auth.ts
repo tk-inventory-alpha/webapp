@@ -1,19 +1,20 @@
 import axios from 'axios';
 
 type ApiAuthResponse = {
-    token: string;
+    access_token?: string;
+    error?: string;
 }
 
 const loginOrRegister = async (email: string, password: string) => {
     const response = await axios.post<ApiAuthResponse>(
-        `${process.env.REACT_APP_API_URL}/api/auth/login`,
+        `${process.env.REACT_APP_API_URL}/api/auth/loginOrRegister`,
         {email, password}
     );
 
-    const { token } = response.data;
+    const { access_token } = response.data;
 
     return {
-        token, email
+        token: access_token!, email
     };
 }
 

@@ -38,6 +38,8 @@ const AddProduct = () => {
             dispatch(addProduct(product));
 
             helpers.setSubmitting(false);
+
+            helpers.resetForm();
         },
         []
     );

@@ -58,7 +58,7 @@ const ProductList = () => {
     const filteredProducts = useMemo(
         () => {
             if (searchFilter) {
-                return products.filter(product => product.name.includes(searchFilter));
+                return products.filter(product => product.name.toLowerCase().includes(searchFilter.toLowerCase()));
             }
 
             return products;

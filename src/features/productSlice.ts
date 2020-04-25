@@ -4,7 +4,7 @@ import * as ProductService from '../services/product';
 import { RootState } from "../app/store";
 
 export type Product = {
-    id: number;
+    id: string;
     name: string;
     stocked: boolean;
 }
@@ -34,7 +34,21 @@ export const retrieveProductsAsync = createAsyncThunk(
     async () => {
         return await ProductService.retrieveAll();
     }
-)
+);
+
+export const updateProductAsync = createAsyncThunk(
+    'product/update',
+    async (product: Product) => {
+        return await ProductService.update(product);
+    }
+);
+
+export const removeProductAsync = createAsyncThunk(
+    'product/remove',
+    async (product: Product) => {
+        return await ProductService.remove(product);
+    }
+);
 
 export const productSlice = createSlice({
     name: 'product',
@@ -74,7 +88,29 @@ export const productSlice = createSlice({
                 state.loading.retrieve = false;
                 state.errors.retrieve = 'Something went wrong!';
             }
-        )
+        );
+
+        builder.addCase(
+            updateProductAsync.fulfilled,
+            (state, action: PayloadAction<Product>) => {
+                const product = action.payload;
+
+                state.products = state.products.map(
+                    existing => existing.id === product.id ? product : existing
+                );
+            }
+        );
+
+        builder.addCase(
+            removeProductAsync.fulfilled,
+            (state, action: PayloadAction<Product>) => {
+                const product = action.payload;
+
+                state.products = state.products.filter(
+                    existing => existing.id !== product.id
+                );
+            }
+        );
     }
 });
 

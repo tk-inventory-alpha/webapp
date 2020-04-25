@@ -6,6 +6,7 @@ import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
 import classNames from "classnames";
 import { useDispatch } from "react-redux";
+import { pathOr } from 'ramda';
 
 import { login } from '../../features/authSlice';
 import * as AuthService from '../../services/auth';
@@ -41,11 +42,17 @@ const LogInOrRegisterForm = () => {
         async ({email, password}: FormValues, helpers: FormikHelpers<FormValues>) => {
             helpers.setSubmitting(true);
 
-            const { token } = await AuthService.loginOrRegister(email, password);
+            try {
+                const { token } = await AuthService.loginOrRegister(email, password);
 
-            dispatch(login({ email, token }));
+                dispatch(login({ email, token }));
 
-            history.push('/dashboard');
+                history.push('/dashboard');
+            } catch (exception) {
+                helpers.setStatus(pathOr(exception.message, ['response', 'data', 'error'], exception));
+            } finally {
+                helpers.setSubmitting(false);
+            }
         },
         []
     );
@@ -56,7 +63,7 @@ const LogInOrRegisterForm = () => {
                     onSubmit={handleSubmit}
                     validationSchema={validationSchema}>
                 {
-                    ({isValid, touched, errors}) => (
+                    ({isValid, touched, errors, status}) => (
                         <Form>
                             <div className="field">
                                 <div className="control has-icons-left">
@@ -100,6 +107,13 @@ const LogInOrRegisterForm = () => {
                                     </button>
                                 </div>
                             </div>
+                            {status &&
+                                <article className="message is-danger">
+                                    <div className="message-body">
+                                        <strong>Error!</strong> {status}
+                                    </div>
+                                </article>
+                            }
                         </Form>
                     )
                 }

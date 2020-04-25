@@ -35,6 +35,15 @@ const update = async (product: Product) => {
     return response.data as Product;
 };
 
+const remove = async (product: Product) => {
+    await axios.delete(
+        `${process.env.REACT_APP_API_URL}/api/products/${product.id}`,
+        axiosConfig()
+    );
+
+    return product;
+};
+
 const retrieveAll = async () => {
     const response = await axios.get<Product[]>(
         `${process.env.REACT_APP_API_URL}/api/products/`,
@@ -47,5 +56,6 @@ const retrieveAll = async () => {
 export {
     create,
     update,
+    remove,
     retrieveAll
 }

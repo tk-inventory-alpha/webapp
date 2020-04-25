@@ -4,14 +4,17 @@ import 'bulma/css/bulma.min.css';
 import 'bulma-tooltip/dist/css/bulma-tooltip.min.css';
 import './index.css';
 import App from './App';
-import { store } from './app/store';
+import { store, persistor } from './app/store';
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
+import { PersistGate } from "redux-persist/integration/react";
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+        <PersistGate persistor={persistor}>
+            <App />
+        </PersistGate>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')
